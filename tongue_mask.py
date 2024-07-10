@@ -7,7 +7,11 @@ from skimage.measure import label, regionprops
 from skimage.morphology import dilation, erosion
 from skimage import io
 import matplotlib.pyplot as plt
+import os
 
+# Importing the classes for path names
+INPUT_IMAGE_FOLDER = os.path.join(os.getcwd(), 'test_images', 'input_image')
+OUTPUT_IMAGE_FOLDER = os.path.join(os.getcwd(), 'test_images', 'output_image')
 
 def process_image(input_image):
     # Load the image
@@ -39,10 +43,10 @@ def process_image(input_image):
     result = cv2.bitwise_and(img, img, mask=mask)
 
     # Save the result
-    cv2.imwrite('result.png', result)
+    cv2.imwrite(os.path.join(OUTPUT_IMAGE_FOLDER, 'masked_image.png'), result)
 
     # Load the result image
-    sample = imread('result.png')
+    sample = imread(os.path.join(OUTPUT_IMAGE_FOLDER, 'masked_image.png'))
     sample_g = rgb2gray(sample)
 
     # Binarize image
@@ -77,7 +81,7 @@ def process_image(input_image):
 
     # Save the biggest blob image
     biggest_blob = sample_rp[list2[0][0]].image
-    io.imsave('biggest_blob.png', biggest_blob)
+    io.imsave(os.path.join(OUTPUT_IMAGE_FOLDER, 'biggest_blob.png'), biggest_blob)
 
     # Store the coordinates of the edge of the biggest blob
     coords = sample_rp[list2[0][0]].coords
@@ -98,17 +102,29 @@ def process_image(input_image):
     contours, hierarchy = cv2.findContours(mask_tongue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(img_tongue_masked, contours, -1, (0, 255, 0), 3)
 
-    # Convert the image from BGR to RGB format for displaying in Matplotlib
-    img_tongue_rgb = cv2.cvtColor(img_tongue_masked, cv2.COLOR_BGR2RGB)
-
-    return img_tongue_rgb
-
+    # return img_tongue_rgb
+    return img_tongue_masked
 
 # ========== TEST CODE ====================
 # Call the function with an input image
-input_image = 'wide_tongue.png'
-output_image = process_image(input_image)
+# if __name__ == '__main__':
+#     input_image_path = os.path.join(INPUT_IMAGE_FOLDER, 'tongue_2.png')
+#     output_image = process_image(input_image_path)
 
-# Display the output image
-plt.imshow(output_image)
-plt.show()
+#     # Display the output image
+#     plt.imshow(output_image)
+#     plt.show()
+
+if __name__ == '__main__':
+    input_image_array = ['wide_tongue.png', 'tongue_1.png', 'tongue_2.png']
+
+    for tongue_image in input_image_array:
+        print(f"Processing {tongue_image}...")
+        input_image_path = os.path.join(INPUT_IMAGE_FOLDER, tongue_image)
+        output_image = process_image(input_image=input_image_path)
+        
+        # Save the output image
+        output_image_path = os.path.join(OUTPUT_IMAGE_FOLDER, tongue_image)
+        cv2.imwrite(output_image_path, output_image)
+        
+        print(f"Result for image {tongue_image} stored at {output_image_path}")
