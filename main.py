@@ -34,7 +34,6 @@ def upload_image():
 
     return response
 
-
 def add_shape(image_name):
     image = cv2.imread(image_name)
     image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
@@ -73,11 +72,11 @@ def get_image():
 #     return result
 
 
-@app.route("/test", methods=['GET, POST'])
+@app.route("/test", methods=['GET', 'POST'])
 def test_response():
-    return "this is test response"
+    return "Connection Active.\nPlease SCAN FACE and then press UPLOAD for result"
 
 
 if __name__ == "__main__":
-    # Bind to all interfaces
-    app.run(host='10.0.0.98', port=5001, debug=True)
+    # Bind to all interfacesf
+    app.run(host='10.0.0.85', port=5001, debug=True)
